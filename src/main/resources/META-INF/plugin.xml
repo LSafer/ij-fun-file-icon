@@ -8,7 +8,8 @@
     ]]></description>
 
     <change-notes>
-        Initial Version
+        - Change file icon when a val/var matches file's name
+        - Special file icon for @Composable functions
     </change-notes>
 
     <depends>com.intellij.modules.platform</depends>
