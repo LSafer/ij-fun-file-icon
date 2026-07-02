@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin require-restart="false">
     <id>net.lsafer.ij.fun_file_icon</id>
     <name>Kotlin Function File Icon</name>
     <vendor>LSafer</vendor>
