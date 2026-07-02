@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.Icon
 
 class FunFileIconProvider : IconProvider(), DumbAware {
@@ -19,6 +20,15 @@ class FunFileIconProvider : IconProvider(), DumbAware {
                     if (declaration.name == fileNameWithoutExtension) {
                         // Return the standard IntelliJ Kotlin Function Icon
                         return KotlinIcons.FUNCTION
+                    }
+                }
+                if (declaration is KtProperty) {
+                    val fileNameWithoutExtension = element.name.substringBeforeLast(".")
+
+                    // Match the property name to the file name
+                    if (declaration.name == fileNameWithoutExtension) {
+                        // Return the standard IntelliJ Kotlin VAR/VAL Icon
+                        return if (declaration.isVar) KotlinIcons.VAR else KotlinIcons.VAL
                     }
                 }
             }
