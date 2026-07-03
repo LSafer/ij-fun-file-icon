@@ -38,6 +38,12 @@ class FunFileIconProvider : IconProvider(), DumbAware {
                         return if (declaration.isVar) KotlinIcons.VAR else KotlinIcons.VAL
                     }
                 }
+                if (declaration is KtTypeAlias) {
+                    val fileNameWithoutExtension = element.name.substringBeforeLast(".")
+
+                    if (declaration.name == fileNameWithoutExtension)
+                        return KotlinIcons.TYPE_ALIAS
+                }
             }
         }
 
