@@ -5,9 +5,9 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.IconLoader
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isAbstract
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import javax.swing.Icon
 
 class FunFileIconProvider : IconProvider(), DumbAware {
@@ -15,7 +15,9 @@ class FunFileIconProvider : IconProvider(), DumbAware {
 
     override fun getIcon(element: PsiElement, flags: Int): Icon? {
         if (element is KtFile) {
-            for (declaration in element.declarations) {
+            val declarations = element.declarations
+
+            for (declaration in declarations) {
                 if (declaration is KtNamedFunction) {
                     val fileNameWithoutExtension = element.name.substringBeforeLast(".")
 
@@ -43,6 +45,28 @@ class FunFileIconProvider : IconProvider(), DumbAware {
 
                     if (declaration.name == fileNameWithoutExtension)
                         return KotlinIcons.TYPE_ALIAS
+                }
+                if (declaration is KtClass) {
+                    if (declarations.size == 1)
+                        return null // Let the default behavior win
+
+                    val fileNameWithoutExtension = element.name.substringBeforeLast(".")
+
+                    // Match the class name to the file name
+                    if (declaration.name == fileNameWithoutExtension) {
+                        if (declaration.isInterface())
+                            return KotlinIcons.INTERFACE
+                        if (declaration.isEnum())
+                            return KotlinIcons.ENUM
+                        if (declaration.isAbstract())
+                            return KotlinIcons.ABSTRACT_CLASS
+                        if (declaration.isAnnotation())
+                            return KotlinIcons.ANNOTATION
+                        if (declaration.isObjectLiteral())
+                            return KotlinIcons.OBJECT
+
+                        return KotlinIcons.CLASS
+                    }
                 }
             }
         }
