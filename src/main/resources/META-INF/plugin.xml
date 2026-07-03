@@ -4,13 +4,15 @@
     <vendor>LSafer</vendor>
 
     <description><![CDATA[
-        Change the icon of a Kotlin file when it has a toplevel function with the same name as the file.
+        Change the icon of a Kotlin file when it has a toplevel function
+        with the same name as the file.
     ]]></description>
-
-    <change-notes>
-        - Change file icon when a val/var matches file's name
-        - Special file icon for @Composable functions
-    </change-notes>
+    <change-notes><![CDATA[
+        - Change file icon when a val/var matches file's name <br>
+        - Special file icon for @Composable functions <br>
+        - Change file icon when a typealias matches file's name <br>
+        - Fix file icon when a toplevel class have adjacent elements <br>
+    ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
