@@ -12,6 +12,7 @@
         - Special file icon for @Composable functions <br>
         - Change file icon when a typealias matches file's name <br>
         - Fix file icon when a toplevel class have adjacent elements <br>
+        - Recognize file with extensions of a type <br>
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
