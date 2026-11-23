@@ -15,57 +15,56 @@ class FunFileIconProvider : IconProvider(), DumbAware {
 
     override fun getIcon(element: PsiElement, flags: Int): Icon? {
         if (element is KtFile) {
+            val fileNameWithoutExtension = element.name.substringBeforeLast(".")
             val declarations = element.declarations
 
+            // If a declaration matches the file name
             for (declaration in declarations) {
+                if (declaration.name != fileNameWithoutExtension)
+                    continue
+
                 if (declaration is KtNamedFunction) {
-                    val fileNameWithoutExtension = element.name.substringBeforeLast(".")
+                    // Return Compose logo if it is a composable function
+                    if (declaration.annotationEntries.any { it.shortName?.asString() == "Composable" })
+                        return composeIcon
 
-                    // Match the function name to the file name
-                    if (declaration.name == fileNameWithoutExtension) {
-                        // Return Compose logo if it is a composable function
-                        if (declaration.annotationEntries.any { it.shortName?.asString() == "Composable" })
-                            return composeIcon
-
-                        // Return the standard IntelliJ Kotlin Function Icon
-                        return KotlinIcons.FUNCTION
-                    }
+                    return KotlinIcons.FUNCTION
                 }
                 if (declaration is KtProperty) {
-                    val fileNameWithoutExtension = element.name.substringBeforeLast(".")
-
-                    // Match the property name to the file name
-                    if (declaration.name == fileNameWithoutExtension) {
-                        // Return the standard IntelliJ Kotlin VAR/VAL Icon
-                        return if (declaration.isVar) KotlinIcons.VAR else KotlinIcons.VAL
-                    }
+                    return if (declaration.isVar) KotlinIcons.VAR else KotlinIcons.VAL
                 }
                 if (declaration is KtTypeAlias) {
-                    val fileNameWithoutExtension = element.name.substringBeforeLast(".")
-
-                    if (declaration.name == fileNameWithoutExtension)
-                        return KotlinIcons.TYPE_ALIAS
+                    return KotlinIcons.TYPE_ALIAS
                 }
                 if (declaration is KtClass) {
                     if (declarations.size == 1)
                         return null // Let the default behavior win
 
-                    val fileNameWithoutExtension = element.name.substringBeforeLast(".")
+                    if (declaration.isInterface())
+                        return KotlinIcons.INTERFACE
+                    if (declaration.isEnum())
+                        return KotlinIcons.ENUM
+                    if (declaration.isAbstract())
+                        return KotlinIcons.ABSTRACT_CLASS
+                    if (declaration.isAnnotation())
+                        return KotlinIcons.ANNOTATION
+                    if (declaration.isObjectLiteral())
+                        return KotlinIcons.OBJECT
 
-                    // Match the class name to the file name
-                    if (declaration.name == fileNameWithoutExtension) {
-                        if (declaration.isInterface())
-                            return KotlinIcons.INTERFACE
-                        if (declaration.isEnum())
-                            return KotlinIcons.ENUM
-                        if (declaration.isAbstract())
-                            return KotlinIcons.ABSTRACT_CLASS
-                        if (declaration.isAnnotation())
-                            return KotlinIcons.ANNOTATION
-                        if (declaration.isObjectLiteral())
-                            return KotlinIcons.OBJECT
+                    return KotlinIcons.CLASS
+                }
+            }
 
-                        return KotlinIcons.CLASS
+            // Match function or property receiver with file name
+            for (declaration in declarations) {
+                if (declaration is KtNamedFunction) {
+                    if (declaration.receiverTypeReference?.nameForReceiverLabel() == fileNameWithoutExtension) {
+                        return KotlinIcons.CLASS_INITIALIZER
+                    }
+                }
+                if (declaration is KtProperty) {
+                    if (declaration.receiverTypeReference?.nameForReceiverLabel() == fileNameWithoutExtension) {
+                        return KotlinIcons.CLASS_INITIALIZER
                     }
                 }
             }
